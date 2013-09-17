@@ -1,6 +1,8 @@
 (function () {
+    var _ = this._ || require('underscore')
+        , dbc = this.dbc || require('dbc');
 
-    window.resourceclient = function(constructor) {
+    var resourceclient = function (constructor) {
         dbc.required(constructor);
         dbc.isFunction(constructor);
         dbc.required(constructor.url, 'Cannot build a gateway for a constructor that does not have a url property');
@@ -10,6 +12,12 @@
                 return $.ajax({
                     dataType: "json",
                     url: url
+                }).done(function(data) {
+                    return _.isArray(data)
+                        ? data.map(function(o) {
+                            return new constructor(o);
+                        })
+                        : new constructor(data);
                 });
             },
             
@@ -43,5 +51,17 @@
             }
         };
     };
+
+    if (typeof define !== "undefined" && define !== null) {
+        define('resourceclient', [], function () {
+            return resourceclient;
+        });
+    } else if (typeof window !== "undefined" && window !== null) {
+        window.resourceclient = resourceclient;
+    }
+
+    if (typeof module !== "undefined" && module !== null) {
+        module.exports = resourceclient;
+    }
 
 })();
