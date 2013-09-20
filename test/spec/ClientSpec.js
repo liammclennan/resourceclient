@@ -39,6 +39,12 @@ describe("Client", function() {
                     gateway = resourceclient(constructor);
                 });
 
+                it('should write a resource', function () {
+                    gateway.create({
+                        data: 'Foo'
+                    });
+                });
+                
                 it('should create a gateway', function () {
                     expect(gateway).not.toBe(null);
                 });
