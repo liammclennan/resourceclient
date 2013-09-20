@@ -1,49 +1,55 @@
-(function () {
-    var _ = this._ || require('underscore')
-        , dbc = this.dbc || require('dbc');
+(function (global) {
 
-    var resourceclient = function (constructor) {
-        dbc.required(constructor);
-        dbc.isFunction(constructor);
-        dbc.required(constructor.url, 'Cannot build a gateway for a constructor that does not have a url property');
+    var resourceclient = function (ctor) {
+        var _ = global._ || require('underscore')
+        , dbc = global.dbc || require('dbc');
+        
+        dbc.required(ctor);
+        dbc.isFunction(ctor);
+        dbc.required(ctor.url, 'Cannot build a gateway for a ctor that does not have a url property');
+        
         return {
             get: function (id) {
-                var url = constructor.url + (id || '');
+                var url = ctor.url + (id || '');
                 return $.ajax({
                     dataType: "json",
                     url: url
-                }).done(function(data) {
+                }).pipe(function(data) {
                     return _.isArray(data)
                         ? data.map(function(o) {
-                            return new constructor(o);
+                            return new ctor(o);
                         })
-                        : new constructor(data);
+                        : new ctor(data);
                 });
             },
             
             create: function (data) {
                 return $.ajax({
-                    url: constructor.url,
+                    url: ctor.url,
                     type: 'POST',
                     data: JSON.stringify(data),
                     dataType: 'json',
                     contentType : 'application/json'
+                }).pipe(function (result) {
+                    return new ctor(result);
                 });
             },
 
             update: function (id, data) {
-                var url = constructor.url + (id || '');
+                var url = ctor.url + (id || '');
                 return $.ajax({
                     url: url,
                     type: 'PUT',
                     data: JSON.stringify(data),
                     dataType: 'json',
                     contentType: 'application/json'
+                }).pipe(function (result) {
+                    return new ctor(result);
                 });
             },
 
             delete: function (id) {
-                var url = constructor.url + (id || '');
+                var url = ctor.url + (id || '');
                 return $.ajax({
                     url: url,
                     type: 'DELETE'
@@ -64,4 +70,4 @@
         module.exports = resourceclient;
     }
 
-})();
+})(this);
