@@ -6,7 +6,7 @@ Resourceclient is a simple, resource-oriented http client. It makes the followin
 1. That they have a `url` property that defines the endpoint of the resource.
 1. That they have a constructor that takes a single argument, which is an object containing the properties to be copied to the object.
 
-Gateway methods return promises.
+Gateway methods return jquery promises. The server counterpart to resourceclient is [resourceserver](https://github.com/liammclennan/resourceserver).
 
 eg. 
 
