@@ -1,6 +1,6 @@
 {
   "name": "resourceclient",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Simple resource-oriented http client",
   "main": "client.js",
   "directories": {
