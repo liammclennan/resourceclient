@@ -1,5 +1,26 @@
 describe("Client", function() {
 
+    describe('connecting to couch', function () {
+        var Person,gateway;
+        
+        describe('a get', function () {
+            beforeEach(function () {
+            Person = dbc.makeConstructor({
+                name: [{validator: 'type', args:['string']}],
+                age: [{validator: 'type', args:['number']}]
+            });
+            Person.url = 'http://localhost:5984/';
+            gateway = resourceclient(Person);
+            });
+
+            it('should 404', function () {
+                var o = gateway.get('foo');
+                o.then(function (data) {console.log(data);}, function (err) {console.log(err);});    
+            });
+            
+        });
+    });
+
     describe("creating a gateway", function () {
         var constructor = null;
         describe("with null constructor", function () {
