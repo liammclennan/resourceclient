@@ -55,6 +55,7 @@
                         dataType: 'json',
                         contentType: 'application/json'
                     }).then(function (data,result) {
+                        if (!data || result == 'nocontent') throw new Error('Update action did not return the object');
                         resolve(new ctor(data));
                     }, function (jqXHR, textStatus, errorThrown) {
                         reject(textStatus + ' ' + errorThrown);
@@ -63,14 +64,20 @@
                 return promise;
             },
 
-            delete: function (id) {
+            'delete': function (id, info) {
+                if (info == null) {
+                    info = {};
+                }
                 var url = ctor.url + (id || '');
                 var promise = Q.promise(function (resolve,reject) {
                     $.ajax({
                         url: url,
-                        type: 'DELETE'
-                    }).then(function (data,result) {
-                        resolve(new ctor(data));
+                        type: 'DELETE',
+                        data: JSON.stringify(info),
+                        dataType: 'json',
+                        contentType: 'application/json'
+                    }).then(function (data, result) {
+                        resolve(data ? new ctor(data) : null);
                     }, function (jqXHR, textStatus, errorThrown) {
                         reject(textStatus + ' ' + errorThrown);
                     });
